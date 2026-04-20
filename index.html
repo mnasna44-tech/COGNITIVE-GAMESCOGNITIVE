@@ -34,36 +34,33 @@
       margin-bottom: 10px;
       font-size: 20px;
       font-weight: bold;
-    }
-
-    #ruleHint {
-      font-size: 15px;
-      color: #555;
-      margin-bottom: 15px;
-    }
+ }
 
     .game {
       display: flex;
       justify-content: center;
-      align-items:center;
       gap: 80px;
+      margin-bottom: 15px;
     }
 
-    /* ✅ FIXED CENTER ALIGNMENT */
     .panel {
       width: 120px;
       height: 120px;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
     }
-
     .grid{
       display:grid;
       justify-content:center;
+      align-content:center;
+      justify-items:center;
       align-items:center;
-      gap:40px;
+    }
+    .btns{
+      display:flex;
+      justify-content:center;
+      gap:20px;
     }
 
     .btns button {
@@ -88,7 +85,6 @@
 </head>
 
 <body>
-
 <div class="container">
 
   <h2>Match or No Match</h2>
@@ -144,13 +140,15 @@ const left = document.getElementById("left");
 const right = document.getElementById("right");
 const msg = document.getElementById("msg");
 
-/* SHAPE */
+/* ✅ ONLY CHANGE: size control */
 function shape(s,c){
   let d=document.createElement("div");
 
+  let size = (level >= 5) ? 28 : 60;
+
   if(s==="circle"){
-    d.style.width="60px";
-    d.style.height="60px";
+    d.style.width=size+"px";
+    d.style.height=size+"px";
     d.style.borderRadius="50%";
     d.style.background=c;
   }
@@ -158,9 +156,9 @@ function shape(s,c){
   if(s==="triangle"){
     d.style.width="0";
     d.style.height="0";
-    d.style.borderLeft="30px solid transparent";
-    d.style.borderRight="30px solid transparent";
-    d.style.borderBottom="60px solid "+c;
+    d.style.borderLeft=(size/2)+"px solid transparent";
+    d.style.borderRight=(size/2)+"px solid transparent";
+    d.style.borderBottom=size+"px solid "+c;
   }
 
   return d;
@@ -223,18 +221,23 @@ function newRound(){
 
   render(left,base);
   render(right,other);
+  updateRule();
 }
 
-/* ✅ FIXED RENDER (CENTER + GAP ONLY LEVEL 3+) */
+/* ✅ ONLY CHANGE: spacing */
 function render(pan,p){
   pan.innerHTML="";
 
   let g = document.createElement("div");
   g.className = "grid";
 
-  if(level >= 3){
+  if(level >= 5){
+    g.style.gap = "12px";
+  }
+  else if(level >= 3){
     g.style.gap = "20px";
-  } else {
+  } 
+  else{
     g.style.gap = "0px";
   }
 
@@ -264,27 +267,32 @@ function answer(user){
     level++;
     correctCount=0;
     document.getElementById("level").innerText=level;
-
-    let text="";
-    if(level<=2) text="Compare only shapes and choose MATCH or NO MATCH";
-    else if(level<=4) text="Compare shapes and colour and choose MATCH or NOMATCH";
-    else text="Compare pattern and choose MATCH or NOMATCH";
-
-    document.getElementById("ruleHint").innerText = text;
   }
-
   if(wrong>=5){
     gameOver();
     return;
   }
-
   setTimeout(()=>{
     msg.innerText="";
     newRound();
-  },300);
+},300);
 }
+  function updateRule(){
+  let text="";
 
-/* GAME OVER */
+  if(level <= 2){
+    text = "Compare only shapes and choose MATCH or NO MATCH";
+  }
+  else if(level <= 4){
+    text = "Compare shapes and colors and choose MATCH or NO MATCH";
+  }
+  else{
+    text = "Compare patterns and choose MATCH or NO MATCH";
+  }
+
+  document.getElementById("ruleHint").innerText = text;
+  }
+
 function gameOver(){
   document.body.innerHTML = `
     <div style="text-align:center;">
